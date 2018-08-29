@@ -1,7 +1,7 @@
 # Личный проект «Кэндишоп» [![Build status][travis-image]][travis-url]
 
 * Студент: [Валентин Багадин](https://up.htmlacademy.ru/javascript/15/user/291585).
-* Наставник: `Неизвестно`.
+* Наставник: [Роман Мисюрин](https://up.htmlacademy.ru/javascript/15/user/538267).
 
 ---
 
