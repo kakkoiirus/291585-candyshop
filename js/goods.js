@@ -357,54 +357,146 @@ catalogCards.addEventListener('click', function (evt) {
   }
 });
 
-var paymentInner = document.querySelector('.payment__inner ');
-var paymentToggle = paymentInner.querySelector('.payment__method');
-var activePaymentMethod = paymentToggle.querySelector('input:checked').id;
-var activePaymentTab = paymentInner.querySelector('.' + activePaymentMethod + '-wrap');
-
-var onPaymentToggleChange = function (evt) {
-  activePaymentTab.classList.add('visually-hidden');
-  activePaymentTab = paymentInner.querySelector('.' + evt.target.id + '-wrap');
-  activePaymentTab.classList.remove('visually-hidden');
-};
-
-paymentToggle.addEventListener('change', onPaymentToggleChange);
-
 var deliver = document.querySelector('.deliver');
 var deliverToggle = deliver.querySelector('.deliver__toggle');
-var activeDeliverToggle = deliverToggle.querySelector('input:checked').id;
-var activeDeliverTab = deliver.querySelector('.' + activeDeliverToggle);
+var deliverStoresFieldset = deliver.querySelector('.deliver__stores');
+var deliverCourierFieldset = deliver.querySelector('.deliver__entry-fields-wrap');
+
+var deliverTabs = {
+  'deliver__store': {
+    'element': deliver.querySelector('.deliver__store'),
+    'fieldset': deliverStoresFieldset
+  },
+  'deliver__courier': {
+    'element': deliver.querySelector('.deliver__courier'),
+    'fieldset': deliverCourierFieldset
+  },
+  'active': deliverToggle.querySelector('input:checked').id
+};
 
 var onDeliverToggleChange = function (evt) {
-  activeDeliverTab.classList.add('visually-hidden');
-  activeDeliverTab = deliver.querySelector('.' + evt.target.id);
-  activeDeliverTab.classList.remove('visually-hidden');
+  deliverTabs[deliverTabs.active].element.classList.add('visually-hidden');
+  deliverTabs[deliverTabs.active].fieldset.disabled = true;
+  deliverTabs.active = evt.target.id;
+  deliverTabs[deliverTabs.active].element.classList.remove('visually-hidden');
+  if (cartProducts.length) {
+    deliverTabs[deliverTabs.active].fieldset.disabled = false;
+  }
 };
 
 deliverToggle.addEventListener('change', onDeliverToggleChange);
 
 var buySection = document.querySelector('.buy');
-var buySectionTextInputs = buySection.querySelectorAll('input[type="text"]');
-var deliverStoresFieldset = buySection.querySelector('.deliver__stores');
+var orderSection = buySection.querySelector('.order');
 var buySubmitButton = buySection.querySelector('.buy__submit-btn');
+var contactDataInputs = orderSection.querySelectorAll('.contact-data__inputs input');
+var paymentCardInputs = orderSection.querySelectorAll('.payment__inputs input');
+
+var toggleContactInputs = function (status) {
+  for (var i = 0; i < contactDataInputs.length; i++) {
+    contactDataInputs[i].disabled = status;
+  }
+};
+
+var togglePaymentCardInputs = function (status) {
+  for (var i = 0; i < paymentCardInputs.length; i++) {
+    paymentCardInputs[i].disabled = status;
+  }
+};
 
 var disableBuyForm = function () {
-  for (var i = 0; i < buySectionTextInputs.length; i++) {
-    buySectionTextInputs[i].disabled = true;
-  }
+  toggleContactInputs(true);
+  togglePaymentCardInputs(true);
 
   deliverStoresFieldset.disabled = true;
+  deliverCourierFieldset.disabled = true;
   buySubmitButton.disabled = true;
 };
 
 var enableBuyForm = function () {
-  for (var i = 0; i < buySectionTextInputs.length; i++) {
-    buySectionTextInputs[i].disabled = false;
-  }
+  toggleContactInputs(false);
+  togglePaymentCardInputs(false);
 
-  deliverStoresFieldset.disabled = false;
+  deliverTabs[deliverTabs.active].fieldset.disabled = false;
   buySubmitButton.disabled = false;
 };
+
+var deliverStoreList = buySection.querySelector('.deliver__store-list');
+var deliverStoreMapImage = buySection.querySelector('.deliver__store-map-img');
+
+deliverStoreList.addEventListener('change', function (evt) {
+  deliverStoreMapImage.src = 'img/map/' + evt.target.value + '.jpg';
+});
+
+var paymentSection = orderSection.querySelector('.payment');
+var paymentMethodCardInput = paymentSection.querySelector('#payment__card');
+var paymentMethodCardWrap = paymentSection.querySelector('.payment__card-wrap');
+var paymentMethodCashInput = paymentSection.querySelector('#payment__cash');
+var paymentMethodCashWrap = paymentSection.querySelector('.payment__cash-wrap');
+var paymentInputsWrapper = paymentSection.querySelector('.payment__inputs');
+var paymentInputs = paymentSection.querySelectorAll('.payment__inputs input');
+var paymentCardNumber = orderSection.querySelector('#payment__card-number');
+var paymentCardStatus = orderSection.querySelector('.payment__card-status');
+
+var checkLuhn = function (cardNumber) {
+  var cardNumbers = cardNumber.split('');
+  var sumOfNumbers = 0;
+
+  for (var i = 0; i < cardNumbers.length; i++) {
+    if (i % 2 !== 0) {
+      sumOfNumbers += Number(cardNumbers[i]);
+    } else {
+      var tempNumber = Number(cardNumbers[i]) * 2;
+
+      if (tempNumber > 9) {
+        tempNumber = tempNumber - 9;
+      }
+
+      sumOfNumbers += tempNumber;
+    }
+  }
+
+  return sumOfNumbers % 10 === 0;
+};
+
+var checkPaymentCard = function () {
+  var isValid = true;
+  paymentCardNumber.setCustomValidity('');
+
+  for (var i = 0; i < paymentInputs.length; i++) {
+    if (!paymentInputs[i].checkValidity()) {
+      isValid = false;
+      break;
+    }
+  }
+
+  if (isValid) {
+    isValid = checkLuhn(paymentCardNumber.value);
+
+    if (!isValid) {
+      paymentCardNumber.setCustomValidity('Неправильный номер банковской карты');
+    }
+  }
+
+  paymentCardStatus.textContent = isValid ? 'Одобрен' : 'Неизвестен';
+};
+
+paymentMethodCardInput.addEventListener('change', function () {
+  paymentMethodCardWrap.classList.toggle('visually-hidden');
+  paymentMethodCashWrap.classList.toggle('visually-hidden');
+
+  if (cartProducts.length) {
+    togglePaymentCardInputs(false);
+  }
+});
+
+paymentMethodCashInput.addEventListener('change', function () {
+  paymentMethodCardWrap.classList.toggle('visually-hidden');
+  paymentMethodCashWrap.classList.toggle('visually-hidden');
+  togglePaymentCardInputs(true);
+});
+
+paymentInputsWrapper.addEventListener('input', checkPaymentCard);
 
 var catalogFilter = document.querySelector('.catalog__filter + .range');
 var rangeFilter = catalogFilter.querySelector('.range__filter');
@@ -423,3 +515,4 @@ rangeButtonRight.addEventListener('mouseup', function () {
 
 renderProductCards(products);
 disableBuyForm();
+paymentCardStatus.textContent = 'Неизвестен';
