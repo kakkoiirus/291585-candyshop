@@ -87,16 +87,9 @@
   var paymentCardNumber = orderSection.querySelector('#payment__card-number');
   var paymentCardStatus = orderSection.querySelector('.payment__card-status');
 
-  var checkPaymentCard = function () {
-    var isValid = true;
+  var onPaymentInputsChange = function () {
     paymentCardNumber.setCustomValidity('');
-
-    for (var i = 0; i < paymentInputs.length; i++) {
-      if (!paymentInputs[i].checkValidity()) {
-        isValid = false;
-        break;
-      }
-    }
+    var isValid = window.validation.checkCardData(paymentInputs);
 
     if (isValid) {
       isValid = window.utils.checkLuhn(paymentCardNumber.value);
@@ -124,7 +117,7 @@
     togglePaymentCardInputs(true);
   });
 
-  paymentInputsWrapper.addEventListener('input', checkPaymentCard);
+  paymentInputsWrapper.addEventListener('input', onPaymentInputsChange);
 
   disableBuyForm();
   paymentCardStatus.textContent = 'Неизвестен';
