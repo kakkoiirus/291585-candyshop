@@ -498,21 +498,6 @@ paymentMethodCashInput.addEventListener('change', function () {
 
 paymentInputsWrapper.addEventListener('input', checkPaymentCard);
 
-var catalogFilter = document.querySelector('.catalog__filter + .range');
-var rangeFilter = catalogFilter.querySelector('.range__filter');
-var rangeButtonLeft = rangeFilter.querySelector('.range__btn--left');
-var rangeButtonRight = rangeFilter.querySelector('.range__btn--right');
-var rangePriceMin = catalogFilter.querySelector('.range__price--min');
-var rangePriceMax = catalogFilter.querySelector('.range__price--max');
-
-rangeButtonLeft.addEventListener('mouseup', function () {
-  rangePriceMin.textContent = Math.round(rangeButtonLeft.offsetLeft * 100 / rangeFilter.offsetWidth);
-});
-
-rangeButtonRight.addEventListener('mouseup', function () {
-  rangePriceMax.textContent = Math.round(rangeButtonRight.offsetLeft * 100 / rangeFilter.offsetWidth);
-});
-
 renderProductCards(products);
 disableBuyForm();
 paymentCardStatus.textContent = 'Неизвестен';
