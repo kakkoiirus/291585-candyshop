@@ -88,18 +88,9 @@
   var paymentCardStatus = orderSection.querySelector('.payment__card-status');
 
   var onPaymentInputsChange = function () {
-    paymentCardNumber.setCustomValidity('');
-    var isValid = window.validation.checkCardData(paymentInputs);
-
-    if (isValid) {
-      isValid = window.utils.checkLuhn(paymentCardNumber.value);
-
-      if (!isValid) {
-        paymentCardNumber.setCustomValidity('Неправильный номер банковской карты');
-      }
-    }
-
-    paymentCardStatus.textContent = isValid ? 'Одобрен' : 'Неизвестен';
+    var validationResult = window.validation.checkCardData(paymentInputs, paymentCardNumber);
+    paymentCardStatus.textContent = validationResult.message;
+    paymentCardNumber.setCustomValidity(validationResult.customCardValidityMessage);
   };
 
   paymentMethodCardInput.addEventListener('change', function () {
