@@ -19,7 +19,7 @@
         break;
       }
     }
-    
+
     if (result.isValid) {
       result.isValid = checkLuhn(paymentCardNumber.value);
       if (!result.isValid) {
