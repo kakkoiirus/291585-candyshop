@@ -19,14 +19,36 @@
         break;
       }
     }
+    
     if (result.isValid) {
-      result.isValid = window.utils.checkLuhn(paymentCardNumber.value);
+      result.isValid = checkLuhn(paymentCardNumber.value);
       if (!result.isValid) {
         result.customValidityMessage = CARD_NUMBER_ERROR_MESSAGE;
       }
     }
 
     return result;
+  };
+
+  var checkLuhn = function (cardNumber) {
+    var cardNumbers = cardNumber.split('');
+    var sumOfNumbers = 0;
+
+    for (var i = 0; i < cardNumbers.length; i++) {
+      if (i % 2 !== 0) {
+        sumOfNumbers += Number(cardNumbers[i]);
+      } else {
+        var tempNumber = Number(cardNumbers[i]) * 2;
+
+        if (tempNumber > 9) {
+          tempNumber = tempNumber - 9;
+        }
+
+        sumOfNumbers += tempNumber;
+      }
+    }
+
+    return sumOfNumbers % 10 === 0;
   };
 
   window.validation = {

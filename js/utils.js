@@ -24,32 +24,10 @@
     return randomString;
   };
 
-  var checkLuhn = function (cardNumber) {
-    var cardNumbers = cardNumber.split('');
-    var sumOfNumbers = 0;
-
-    for (var i = 0; i < cardNumbers.length; i++) {
-      if (i % 2 !== 0) {
-        sumOfNumbers += Number(cardNumbers[i]);
-      } else {
-        var tempNumber = Number(cardNumbers[i]) * 2;
-
-        if (tempNumber > 9) {
-          tempNumber = tempNumber - 9;
-        }
-
-        sumOfNumbers += tempNumber;
-      }
-    }
-
-    return sumOfNumbers % 10 === 0;
-  };
-
   window.utils = {
     getRandomInt: getRandomInt,
     getRandomIntRange: getRandomIntRange,
     getRandomBool: getRandomBool,
     getRandomString: getRandomString,
-    checkLuhn: checkLuhn
   };
 })();
