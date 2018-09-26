@@ -4,7 +4,7 @@
   var cartProducts = [];
 
   var addToCart = function (productIndex) {
-    var productItem = window.catalog.products[productIndex];
+    var productItem = window.catalog.getProducts()[productIndex];
 
     if (productItem.amount > 0) {
       window.order.setCartStatus(false);

@@ -14,7 +14,7 @@
     cartItem.querySelector('.card-order__title').textContent = product.name;
 
     var cartItemImage = cartItem.querySelector('.card-order__img');
-    cartItemImage.src = product.picture;
+    cartItemImage.src = 'img/cards/' + product.picture;
     cartItemImage.alt = product.name;
 
     cartItem.querySelector('.card-order__price').textContent = product.price + ' ₽';

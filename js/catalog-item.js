@@ -24,7 +24,7 @@
     catalogCard.querySelector('.card__price').innerHTML = product.price + ' <span class="card__currency">₽</span><span class="card__weight">/ ' + product.weight + ' Г</span>';
 
     var productImage = catalogCard.querySelector('.card__img');
-    productImage.src = product.picture;
+    productImage.src = 'img/cards/' + product.picture;
     productImage.alt = product.name;
     var productRating = catalogCard.querySelector('.stars__rating');
 

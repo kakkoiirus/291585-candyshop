@@ -2,11 +2,10 @@
 
 (function () {
 
-  var PRODUCTS_COUNT = 26;
+  var products;
 
-  var products = window.data.getProducts(PRODUCTS_COUNT);
-
-  var renderProductCards = function () {
+  var renderProductCards = function (productsData) {
+    products = productsData;
     var catalogCards = document.querySelector('.catalog__cards');
     catalogCards.classList.remove('catalog__cards--load');
 
@@ -23,9 +22,17 @@
     catalogCards.appendChild(fragment);
   };
 
-  renderProductCards(products);
+  var onLoadError = function (errorMessage) {
+    console.log(errorMessage);
+  };
+
+  var getProducts = function () {
+    return products;
+  };
+
+  window.backend.load(renderProductCards, onLoadError);
 
   window.catalog = {
-    products: products
+    getProducts: getProducts
   };
 })();
