@@ -113,9 +113,17 @@
   disableBuyForm();
   paymentCardStatus.textContent = 'Неизвестен';
 
+  var setTabsInitialState = function () {
+    deliverTabs['deliver__store'].element.classList.remove('visually-hidden');
+    deliverTabs.active = deliverTabs['deliver__store'].element;
+    paymentMethodCardWrap.classList.remove('visually-hidden');
+    paymentMethodCashWrap.classList.add('visually-hidden');
+  };
+
   window.order = {
     enableBuyForm: enableBuyForm,
     disableBuyForm: disableBuyForm,
-    setCartStatus: setCartStatus
+    setCartStatus: setCartStatus,
+    setTabsInitialState: setTabsInitialState
   };
 })();

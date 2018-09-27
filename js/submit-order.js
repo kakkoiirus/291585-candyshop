@@ -23,6 +23,7 @@
 
   var onSubmitSuccess = function () {
     buyForm.reset();
+    window.order.setTabsInitialState();
     modalUploadSuccess.classList.remove('modal--hidden');
 
     document.addEventListener('keydown', onSuccessEscPress);
