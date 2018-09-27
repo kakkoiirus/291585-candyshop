@@ -4,7 +4,7 @@
 
   var products;
 
-  var renderProductCards = function (productsData) {
+  var onLoadProductsSuccess = function (productsData) {
     products = productsData;
     var catalogCards = document.querySelector('.catalog__cards');
     catalogCards.classList.remove('catalog__cards--load');
@@ -26,7 +26,7 @@
     return products;
   };
 
-  window.backend.load(renderProductCards);
+  window.backend.load(onLoadProductsSuccess);
 
   window.catalog = {
     getProducts: getProducts
