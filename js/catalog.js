@@ -22,11 +22,15 @@
     catalogCards.appendChild(fragment);
   };
 
+  var onLoadProductsError = function (message) {
+    window.notification.showMessage('error', message);
+  };
+
   var getProducts = function () {
     return products;
   };
 
-  window.backend.load(onLoadProductsSuccess);
+  window.backend.load(onLoadProductsSuccess, onLoadProductsError);
 
   window.catalog = {
     getProducts: getProducts

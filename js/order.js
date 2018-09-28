@@ -114,8 +114,8 @@
   paymentCardStatus.textContent = 'Неизвестен';
 
   var setTabsInitialState = function () {
-    deliverTabs['deliver__store'].element.classList.remove('visually-hidden');
-    deliverTabs.active = deliverTabs['deliver__store'].element;
+    deliverTabs.active = 'deliver__store';
+    deliverTabs[deliverTabs.active].element.classList.remove('visually-hidden');
     paymentMethodCardWrap.classList.remove('visually-hidden');
     paymentMethodCashWrap.classList.add('visually-hidden');
   };
