@@ -2,11 +2,10 @@
 
 (function () {
 
-  var PRODUCTS_COUNT = 26;
+  var products;
 
-  var products = window.data.getProducts(PRODUCTS_COUNT);
-
-  var renderProductCards = function () {
+  var onLoadProductsSuccess = function (productsData) {
+    products = productsData;
     var catalogCards = document.querySelector('.catalog__cards');
     catalogCards.classList.remove('catalog__cards--load');
 
@@ -23,9 +22,17 @@
     catalogCards.appendChild(fragment);
   };
 
-  renderProductCards(products);
+  var onLoadProductsError = function (message) {
+    window.notification.showMessage('error', message);
+  };
+
+  var getProducts = function () {
+    return products;
+  };
+
+  window.backend.load(onLoadProductsSuccess, onLoadProductsError);
 
   window.catalog = {
-    products: products
+    getProducts: getProducts
   };
 })();
