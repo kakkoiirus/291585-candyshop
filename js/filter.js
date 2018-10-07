@@ -39,11 +39,12 @@
     var products = [];
     var checkedCount = 0;
 
-    if (evt.target.id === 'filter-availability') {
+    if (evt.target.id === 'filter-availability' && evt.target.checked) {
       uncheckFilters(evt.target.id);
       products = window.catalog.getSpecialFilter()[1].products;
-    } else if (evt.target.id === 'filter-favorite') {
+    } else if (evt.target.id === 'filter-favorite' && evt.target.checked) {
       uncheckFilters(evt.target.id);
+      products = window.catalog.getProducts().filter(window.catalog.getSpecialFilter()[0].sortingFunc);
     } else {
       uncheckSpecialFilters();
 
@@ -67,23 +68,44 @@
       });
     }
 
+    products = products.filter(function (product) {
+      return product.price >= Number(rangePriceMin.textContent) &&
+             product.price <= Number(rangePriceMax.textContent);
+    });
+
+    window.catalog.getSortFilter().forEach(function (filter) {
+      if (filter.inputElement.checked) {
+        products = filter.sortingFunc(products);
+      }
+    });
+
     window.catalog.renderProducts(products);
+  };
+
+  var onFormSubmit = function (evt) {
+    evt.preventDefault();
+    uncheckFilters(0);
+    onFormChange(evt);
   };
 
   filterForm.addEventListener('change', onFormChange);
 
+  filterForm.addEventListener('submit', onFormSubmit);
+
   rangeButtonLeft.addEventListener('mousedown', function (evt) {
     var startCoordinate = evt.clientX;
+    rangeButtonLeft.style.zIndex = 1000;
+    rangeButtonRight.style.zIndex = 500;
 
     var setMinPrice = function () {
-      rangePriceMin.textContent = Math.round((rangeButtonLeft.offsetLeft) * 100 / (rangeFilter.offsetWidth - buttonWidth));
+      rangePriceMin.textContent = Math.round((rangeButtonLeft.offsetLeft) * window.catalog.getMaxPrice() / (rangeFilter.offsetWidth - buttonWidth));
       rangeLine.style.left = rangeButtonLeft.offsetLeft + 'px';
     };
 
     var onButtonLeftMouseMove = function (moveEvt) {
       var shift = startCoordinate - moveEvt.clientX;
       var currentX = rangeButtonLeft.offsetLeft - shift;
-      var rightEnd = rightButtonX - buttonWidth;
+      var rightEnd = rightButtonX;
 
       if (currentX < 0) {
         rangeButtonLeft.style.left = '0px';
@@ -97,30 +119,33 @@
       setMinPrice();
     };
 
-    var onButtonLeftMouseup = function () {
+    var onButtonLeftMouseUp = function () {
       setMinPrice();
       leftButtonX = rangeButtonLeft.offsetLeft;
+      onFormChange(evt);
       document.removeEventListener('mousemove', onButtonLeftMouseMove);
-      document.removeEventListener('mouseup', onButtonLeftMouseup);
+      document.removeEventListener('mouseup', onButtonLeftMouseUp);
     };
 
     document.addEventListener('mousemove', onButtonLeftMouseMove);
 
-    document.addEventListener('mouseup', onButtonLeftMouseup);
+    document.addEventListener('mouseup', onButtonLeftMouseUp);
   });
 
   rangeButtonRight.addEventListener('mousedown', function (evt) {
     var startCoordinate = evt.clientX;
+    rangeButtonLeft.style.zIndex = 500;
+    rangeButtonRight.style.zIndex = 1000;
 
     var setMaxPrice = function () {
-      rangePriceMax.textContent = Math.round((rangeButtonRight.offsetLeft) * 100 / (rangeFilter.offsetWidth - buttonWidth));
+      rangePriceMax.textContent = Math.round((rangeButtonRight.offsetLeft) * window.catalog.getMaxPrice() / (rangeFilter.offsetWidth - buttonWidth));
       rangeLine.style.right = (rangeFilter.offsetWidth - rangeButtonRight.offsetLeft - buttonWidth) + 'px';
     };
 
     var onButtonRightMouseMove = function (moveEvt) {
       var shift = startCoordinate - moveEvt.clientX;
       var currentX = rangeButtonRight.offsetLeft - shift;
-      var leftEnd = leftButtonX + buttonWidth;
+      var leftEnd = leftButtonX;
       var rangeEnd = rangeFilter.offsetWidth - buttonWidth;
 
       if (currentX < leftEnd) {
@@ -138,6 +163,7 @@
     var onButtonRightMouseup = function () {
       setMaxPrice();
       rightButtonX = rangeButtonRight.offsetLeft;
+      onFormChange(evt);
       document.removeEventListener('mousemove', onButtonRightMouseMove);
       document.removeEventListener('mouseup', onButtonRightMouseup);
     };

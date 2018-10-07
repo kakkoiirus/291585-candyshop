@@ -3,6 +3,8 @@
 (function () {
 
   var products;
+  var minPrice;
+  var maxPrice;
 
   var kindFilter = [
     {
@@ -44,10 +46,65 @@
 
   var specialFilter = [
     {
-      id: 'filter-favorite'
+      id: 'filter-favorite',
+      sortingFunc: function (product) {
+        return product.favorite === true;
+      }
     },
     {
-      id: 'filter-availability'
+      id: 'filter-availability',
+      sortingFunc: function (product) {
+        return product.amount > 0;
+      }
+    }
+  ];
+
+  var sortFilter = [
+    {
+      id: 'filter-popular',
+      sortingFunc: function (unsortedProducts) {
+        return unsortedProducts;
+      }
+    },
+    {
+      id: 'filter-expensive',
+      sortingFunc: function (unsortedProducts) {
+        var sortedProducts = unsortedProducts.slice();
+
+        sortedProducts.sort(function (a, b) {
+          return b.price - a.price;
+        });
+
+        return sortedProducts;
+      }
+    },
+    {
+      id: 'filter-cheep',
+      sortingFunc: function (unsortedProducts) {
+        var sortedProducts = unsortedProducts.slice();
+
+        sortedProducts.sort(function (a, b) {
+          return a.price - b.price;
+        });
+
+        return sortedProducts;
+      }
+    },
+    {
+      id: 'filter-rating',
+      sortingFunc: function (unsortedProducts) {
+        var sortedProducts = unsortedProducts.slice();
+
+        sortedProducts.sort(function (a, b) {
+          if (a.rating.value !== b.rating.value) {
+            return b.rating.value - a.rating.value;
+          }
+
+          return b.rating.number - a.rating.number;
+        });
+
+        return sortedProducts;
+      }
     }
   ];
 
@@ -64,6 +121,10 @@
   specialFilter.forEach(function (filter) {
     filter.inputElement = document.querySelector('#' + filter.id);
     filter.countElement = document.querySelector('#' + filter.id + '~ .input-btn__item-count');
+  });
+
+  sortFilter.forEach(function (filter) {
+    filter.inputElement = document.querySelector('#' + filter.id);
   });
 
   var renderFilterCount = function (productsData) {
@@ -84,10 +145,7 @@
     });
 
     specialFilter.forEach(function (filter) {
-      filter.products = productsData.filter(function (product) {
-        return product.amount > 0;
-      });
-
+      filter.products = productsData.filter(filter.sortingFunc);
       filter.countElement.textContent = '(' + filter.products.length + ')';
     });
   };
@@ -102,6 +160,19 @@
 
   var getSpecialFilter = function () {
     return specialFilter;
+  };
+
+  var getSortFilter = function () {
+    return sortFilter;
+  };
+
+  var setMinMaxPrices = function () {
+    minPrice = products.reduce(function (minValue, currentValue) {
+      return minValue > currentValue.price ? currentValue.price : minValue;
+    }, 0);
+    maxPrice = products.reduce(function (maxValue, currentValue) {
+      return maxValue < currentValue.price ? currentValue.price : maxValue;
+    }, 0);
   };
 
   var renderProducts = function (productsData) {
@@ -121,6 +192,7 @@
 
   var onLoadProductsSuccess = function (productsData) {
     products = productsData;
+    setMinMaxPrices();
     renderProducts(products);
     renderFilterCount(products);
   };
@@ -133,13 +205,29 @@
     return products;
   };
 
+  var getMinPrice = function () {
+    return minPrice;
+  };
+
+  var getMaxPrice = function () {
+    return maxPrice;
+  };
+
+  var addProductToFavorite = function (id) {
+    products[id].favorite = products[id].favorite ? false : true;
+  };
+
   window.backend.load(onLoadProductsSuccess, onLoadProductsError);
 
   window.catalog = {
     getProducts: getProducts,
+    getMinPrice: getMinPrice,
+    getMaxPrice: getMaxPrice,
+    addProductToFavorite: addProductToFavorite,
     getKindFilter: getKindFilter,
     renderProducts: renderProducts,
     getNutritionFilter: getNutritionFilter,
-    getSpecialFilter: getSpecialFilter
+    getSpecialFilter: getSpecialFilter,
+    getSortFilter: getSortFilter
   };
 })();

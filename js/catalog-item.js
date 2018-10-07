@@ -44,6 +44,12 @@
     catalogCard.querySelector('.card__composition-list').textContent = product.nutritionFacts.contents;
 
     catalogCard.querySelector('.card__btn').dataset.index = index;
+    var cardButtonFavorite = catalogCard.querySelector('.card__btn-favorite');
+    cardButtonFavorite.dataset.index = index;
+
+    if (product.favorite) {
+      cardButtonFavorite.classList.add('card__btn-favorite--selected');
+    }
 
     return catalogCard;
   };
