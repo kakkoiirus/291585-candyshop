@@ -2,31 +2,42 @@
 
 (function () {
   var renderFilterCount = function (productsData) {
-    window.filterElements.getKindFilter().forEach(function (filter) {
-      filter.products = productsData.filter(function (product) {
-        return product.kind === filter.name;
-      });
+    for (var kindElement in window.filterElements.kindFilter) {
+      if (window.filterElements.kindFilter.hasOwnProperty(kindElement)) {
+        var kindFilter = window.filterElements.kindFilter[kindElement];
+        kindFilter.products = productsData.filter(function (product) {
+          return product.kind === kindFilter.name;
+        });
 
-      filter.countElement.textContent = '(' + filter.products.length + ')';
-    });
+        kindFilter.countElement.textContent = '(' + kindFilter.products.length + ')';
+      }
+    }
 
-    window.filterElements.getNutritionFilter().forEach(function (filter) {
-      filter.products = productsData.filter(function (product) {
-        return product.nutritionFacts[filter.name] === true;
-      });
+    for (var nutritionElement in window.filterElements.nutritionFilter) {
+      if (window.filterElements.nutritionFilter.hasOwnProperty(nutritionElement)) {
+        var nutritionFilter = window.filterElements.nutritionFilter[nutritionElement];
 
-      filter.countElement.textContent = '(' + filter.products.length + ')';
-    });
+        nutritionFilter.products = productsData.filter(function (product) {
+          return product.nutritionFacts[nutritionFilter.name] === true;
+        });
 
-    window.filterElements.getSpecialFilter().forEach(function (filter) {
-      filter.products = productsData.filter(filter.sortingFunc);
-      filter.countElement.textContent = '(' + filter.products.length + ')';
-    });
+        nutritionFilter.countElement.textContent = '(' + nutritionFilter.products.length + ')';
+      }
+    }
+
+    for (var specialElement in window.filterElements.specialFilter) {
+      if (window.filterElements.specialFilter.hasOwnProperty(specialElement)) {
+        var specialFilter = window.filterElements.specialFilter[specialElement];
+
+        specialFilter.products = productsData.filter(specialFilter.sortingFunc);
+        specialFilter.countElement.textContent = '(' + specialFilter.products.length + ')';
+      }
+    }
   };
 
   var updateFavoriteFilterCount = function (productsData) {
-    window.filterElements.getSpecialFilter()[0].products = productsData.filter(window.filterElements.getSpecialFilter()[0].sortingFunc);
-    window.filterElements.getSpecialFilter()[0].countElement.textContent = '(' + window.filterElements.getSpecialFilter()[0].products.length + ')';
+    window.filterElements.specialFilter['filter-favorite'].products = productsData.filter(window.filterElements.specialFilter['filter-favorite'].sortingFunc);
+    window.filterElements.specialFilter['filter-favorite'].countElement.textContent = '(' + window.filterElements.specialFilter['filter-favorite'].products.length + ')';
   };
 
   var catalogFilter = document.querySelector('.catalog__filter + .range');
@@ -42,29 +53,37 @@
     var products = [];
     var checkedCount = 0;
 
-    if (window.filterElements.getSpecialFilter()[1].inputElement.checked) {
-      products = window.filterElements.getSpecialFilter()[1].products;
-    } else if (window.filterElements.getSpecialFilter()[0].inputElement.checked) {
-      products = window.catalog.getProducts().filter(window.filterElements.getSpecialFilter()[0].sortingFunc);
+    if (window.filterElements.specialFilter['filter-availability'].inputElement.checked) {
+      products = window.filterElements.specialFilter['filter-availability'].products;
+    } else if (window.filterElements.specialFilter['filter-favorite'].inputElement.checked) {
+      products = window.catalog.getProducts().filter(window.filterElements.specialFilter['filter-favorite'].sortingFunc);
     } else {
-      window.filterElements.getKindFilter().forEach(function (filter) {
-        if (filter.inputElement.checked) {
-          checkedCount++;
-          products = products.concat(filter.products);
+      for (var kindElement in window.filterElements.kindFilter) {
+        if (window.filterElements.kindFilter.hasOwnProperty(kindElement)) {
+          var kindFilter = window.filterElements.kindFilter[kindElement];
+
+          if (kindFilter.inputElement.checked) {
+            checkedCount++;
+            products = products.concat(kindFilter.products);
+          }
         }
-      });
+      }
 
       if (!checkedCount && products.length === 0) {
         products = window.catalog.getProducts();
       }
 
-      window.filterElements.getNutritionFilter().forEach(function (filter) {
-        if (filter.inputElement.checked) {
-          products = products.filter(function (product) {
-            return product.nutritionFacts[filter.name] === true;
-          });
+      for (var nutritionElement in window.filterElements.nutritionFilter) {
+        if (window.filterElements.nutritionFilter.hasOwnProperty(nutritionElement)) {
+          var nutritionFilter = window.filterElements.nutritionFilter[nutritionElement];
+
+          if (nutritionFilter.inputElement.checked) {
+            products = products.filter(function (product) {
+              return product.nutritionFacts[nutritionFilter.name] === true;
+            });
+          }
         }
-      });
+      }
     }
 
     products = products.filter(function (product) {
@@ -72,39 +91,51 @@
              product.price <= Number(rangePriceMax.textContent);
     });
 
-    window.filterElements.getSortFilter().forEach(function (filter) {
-      if (filter.inputElement.checked) {
-        products = filter.sortingFunc(products);
+    for (var sortElement in window.filterElements.sortFilter) {
+      if (window.filterElements.sortFilter.hasOwnProperty(sortElement)) {
+
+        if (window.filterElements.sortFilter[sortElement].inputElement.checked) {
+          products = window.filterElements.sortFilter[sortElement].sortingFunc(products);
+        }
       }
-    });
+    }
 
     window.catalog.renderProducts(products);
   };
 
   var uncheckFilters = function (activeSpecialFilter) {
-    window.filterElements.getKindFilter().forEach(function (filter) {
-      filter.inputElement.checked = false;
-    });
-
-    window.filterElements.getNutritionFilter().forEach(function (filter) {
-      filter.inputElement.checked = false;
-    });
-
-    window.filterElements.getSpecialFilter().forEach(function (filter) {
-      if (filter.id !== activeSpecialFilter) {
-        filter.inputElement.checked = false;
+    for (var kindElement in window.filterElements.kindFilter) {
+      if (window.filterElements.kindFilter.hasOwnProperty(kindElement)) {
+        window.filterElements.kindFilter[kindElement].inputElement.checked = false;
       }
-    });
+    }
+
+    for (var nutritionElement in window.filterElements.nutritionFilter) {
+      if (window.filterElements.nutritionFilter.hasOwnProperty(nutritionElement)) {
+        window.filterElements.nutritionFilter[nutritionElement].inputElement.checked = false;
+      }
+    }
+
+    for (var specialElement in window.filterElements.specialFilter) {
+      if (window.filterElements.specialFilter.hasOwnProperty(specialElement)) {
+
+        if (specialElement !== activeSpecialFilter) {
+          window.filterElements.specialFilter[specialElement].inputElement.checked = false;
+        }
+      }
+    }
   };
 
   var uncheckSpecialFilters = function () {
-    window.filterElements.getSpecialFilter().forEach(function (filter) {
-      filter.inputElement.checked = false;
-    });
+    for (var specialElement in window.filterElements.specialFilter) {
+      if (window.filterElements.specialFilter.hasOwnProperty(specialElement)) {
+        window.filterElements.specialFilter[specialElement].inputElement.checked = false;
+      }
+    }
   };
 
   var setInitialSortFilter = function () {
-    window.filterElements.getSortFilter()[0].inputElement.checked = true;
+    window.filterElements.sortFilter['filter-popular'].inputElement.checked = true;
   };
 
   var setInitialRange = function () {

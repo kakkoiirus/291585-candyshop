@@ -3,6 +3,10 @@
 (function () {
   var filterForm = document.querySelector('.catalog__sidebar form');
   var catalogFilters = filterForm.querySelectorAll('ul.catalog__filter');
+  var kindFilterBlock = catalogFilters[0];
+  var nutritionFilterBlock = catalogFilters[1];
+  var specialFilterBlock = catalogFilters[2];
+  var sortFilterBlock = catalogFilters[3];
   var rangeButtonLeft = window.filterLogic.rangeButtonLeft;
   var rangeButtonRight = window.filterLogic.rangeButtonRight;
   var leftButtonX = rangeButtonLeft.offsetLeft;
@@ -31,10 +35,10 @@
     window.debounce(window.filterLogic.onFormChange);
   };
 
-  catalogFilters[0].addEventListener('change', onKindAndNutritionChange);
-  catalogFilters[1].addEventListener('change', onKindAndNutritionChange);
-  catalogFilters[2].addEventListener('change', onSpecialChange);
-  catalogFilters[3].addEventListener('change', onSortChange);
+  kindFilterBlock.addEventListener('change', onKindAndNutritionChange);
+  nutritionFilterBlock.addEventListener('change', onKindAndNutritionChange);
+  specialFilterBlock.addEventListener('change', onSpecialChange);
+  sortFilterBlock.addEventListener('change', onSortChange);
 
   filterForm.addEventListener('submit', onFormSubmit);
 

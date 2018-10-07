@@ -1,68 +1,56 @@
 'use strict';
 
 (function () {
-  var kindFilter = [
-    {
-      id: 'filter-icecream',
+  var kindFilter = {
+    'filter-icecream': {
       name: 'Мороженое'
     },
-    {
-      id: 'filter-soda',
+    'filter-soda': {
       name: 'Газировка'
     },
-    {
-      id: 'filter-gum',
+    'filter-gum': {
       name: 'Жевательная резинка'
     },
-    {
-      id: 'filter-marmalade',
+    'filter-marmalade': {
       name: 'Мармелад'
     },
-    {
+    'filter-marshmallows': {
       id: 'filter-marshmallows',
-      name: 'Зефир'
     }
-  ];
+  };
 
-  var nutritionFilter = [
-    {
-      id: 'filter-sugar-free',
+  var nutritionFilter = {
+    'filter-sugar-free': {
       name: 'sugar'
     },
-    {
-      id: 'filter-vegetarian',
+    'filter-vegetarian': {
       name: 'vegetarian'
     },
-    {
-      id: 'filter-gluten-free',
+    'filter-gluten-free': {
       name: 'gluten'
     }
-  ];
+  };
 
-  var specialFilter = [
-    {
-      id: 'filter-favorite',
+  var specialFilter = {
+    'filter-favorite': {
       sortingFunc: function (product) {
         return product.favorite === true;
       }
     },
-    {
-      id: 'filter-availability',
+    'filter-availability': {
       sortingFunc: function (product) {
         return product.amount > 0;
       }
     }
-  ];
+  };
 
-  var sortFilter = [
-    {
-      id: 'filter-popular',
+  var sortFilter = {
+    'filter-popular': {
       sortingFunc: function (unsortedProducts) {
         return unsortedProducts;
       }
     },
-    {
-      id: 'filter-expensive',
+    'filter-expensive': {
       sortingFunc: function (unsortedProducts) {
         var sortedProducts = unsortedProducts.slice();
 
@@ -73,8 +61,7 @@
         return sortedProducts;
       }
     },
-    {
-      id: 'filter-cheep',
+    'filter-cheep': {
       sortingFunc: function (unsortedProducts) {
         var sortedProducts = unsortedProducts.slice();
 
@@ -85,8 +72,7 @@
         return sortedProducts;
       }
     },
-    {
-      id: 'filter-rating',
+    'filter-rating': {
       sortingFunc: function (unsortedProducts) {
         var sortedProducts = unsortedProducts.slice();
 
@@ -101,47 +87,39 @@
         return sortedProducts;
       }
     }
-  ];
-
-  kindFilter.forEach(function (filter) {
-    filter.inputElement = document.querySelector('#' + filter.id);
-    filter.countElement = document.querySelector('#' + filter.id + '~ .input-btn__item-count');
-  });
-
-  nutritionFilter.forEach(function (filter) {
-    filter.inputElement = document.querySelector('#' + filter.id);
-    filter.countElement = document.querySelector('#' + filter.id + '~ .input-btn__item-count');
-  });
-
-  specialFilter.forEach(function (filter) {
-    filter.inputElement = document.querySelector('#' + filter.id);
-    filter.countElement = document.querySelector('#' + filter.id + '~ .input-btn__item-count');
-  });
-
-  sortFilter.forEach(function (filter) {
-    filter.inputElement = document.querySelector('#' + filter.id);
-  });
-
-  var getKindFilter = function () {
-    return kindFilter;
   };
 
-  var getNutritionFilter = function () {
-    return nutritionFilter;
-  };
+  for (var kindElement in kindFilter) {
+    if (kindFilter.hasOwnProperty(kindElement)) {
+      kindFilter[kindElement].inputElement = document.querySelector('#' + kindElement);
+      kindFilter[kindElement].countElement = document.querySelector('#' + kindElement + '~ .input-btn__item-count');
+    }
+  }
 
-  var getSpecialFilter = function () {
-    return specialFilter;
-  };
+  for (var nutritionElement in nutritionFilter) {
+    if (nutritionFilter.hasOwnProperty(nutritionElement)) {
+      nutritionFilter[nutritionElement].inputElement = document.querySelector('#' + nutritionElement);
+      nutritionFilter[nutritionElement].countElement = document.querySelector('#' + nutritionElement + '~ .input-btn__item-count');
+    }
+  }
 
-  var getSortFilter = function () {
-    return sortFilter;
-  };
+  for (var specialElement in specialFilter) {
+    if (specialFilter.hasOwnProperty(specialElement)) {
+      specialFilter[specialElement].inputElement = document.querySelector('#' + specialElement);
+      specialFilter[specialElement].countElement = document.querySelector('#' + specialElement + '~ .input-btn__item-count');
+    }
+  }
+
+  for (var sortElement in sortFilter) {
+    if (sortFilter.hasOwnProperty(sortElement)) {
+      sortFilter[sortElement].inputElement = document.querySelector('#' + sortElement);
+    }
+  }
 
   window.filterElements = {
-    getKindFilter: getKindFilter,
-    getNutritionFilter: getNutritionFilter,
-    getSpecialFilter: getSpecialFilter,
-    getSortFilter: getSortFilter
+    kindFilter: kindFilter,
+    nutritionFilter: nutritionFilter,
+    specialFilter: specialFilter,
+    sortFilter: sortFilter
   };
 })();
