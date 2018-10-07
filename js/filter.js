@@ -2,93 +2,39 @@
 
 (function () {
   var filterForm = document.querySelector('.catalog__sidebar form');
-  var catalogFilter = document.querySelector('.catalog__filter + .range');
-  var rangeFilter = catalogFilter.querySelector('.range__filter');
-  var rangeLine = rangeFilter.querySelector('.range__fill-line');
-  var rangeButtonLeft = rangeFilter.querySelector('.range__btn--left');
-  var rangeButtonRight = rangeFilter.querySelector('.range__btn--right');
-  var rangePriceMin = catalogFilter.querySelector('.range__price--min');
-  var rangePriceMax = catalogFilter.querySelector('.range__price--max');
-  var buttonWidth = rangeButtonLeft.offsetWidth;
+  var catalogFilters = filterForm.querySelectorAll('ul.catalog__filter');
+  var rangeButtonLeft = window.filterLogic.rangeButtonLeft;
+  var rangeButtonRight = window.filterLogic.rangeButtonRight;
   var leftButtonX = rangeButtonLeft.offsetLeft;
   var rightButtonX = rangeButtonRight.offsetLeft;
 
-  var uncheckFilters = function (activeSpecialFilter) {
-    window.catalog.getKindFilter().forEach(function (filter) {
-      filter.inputElement.checked = false;
-    });
-
-    window.catalog.getNutritionFilter().forEach(function (filter) {
-      filter.inputElement.checked = false;
-    });
-
-    window.catalog.getSpecialFilter().forEach(function (filter) {
-      if (filter.id !== activeSpecialFilter) {
-        filter.inputElement.checked = false;
-      }
-    });
+  var onKindAndNutritionChange = function () {
+    window.filterLogic.uncheckSpecialFilters();
+    window.debounce(window.filterLogic.onFormChange);
   };
 
-  var uncheckSpecialFilters = function () {
-    window.catalog.getSpecialFilter().forEach(function (filter) {
-      filter.inputElement.checked = false;
-    });
+  var onSpecialChange = function (evt) {
+    window.filterLogic.uncheckFilters(evt.target.id);
+    window.filterLogic.setInitialRange();
+    window.debounce(window.filterLogic.onFormChange);
   };
 
-  var onFormChange = function (evt) {
-    var products = [];
-    var checkedCount = 0;
-
-    if (evt.target.id === 'filter-availability' && evt.target.checked) {
-      uncheckFilters(evt.target.id);
-      products = window.catalog.getSpecialFilter()[1].products;
-    } else if (evt.target.id === 'filter-favorite' && evt.target.checked) {
-      uncheckFilters(evt.target.id);
-      products = window.catalog.getProducts().filter(window.catalog.getSpecialFilter()[0].sortingFunc);
-    } else {
-      uncheckSpecialFilters();
-
-      window.catalog.getKindFilter().forEach(function (filter) {
-        if (filter.inputElement.checked) {
-          checkedCount++;
-          products = products.concat(filter.products);
-        }
-      });
-
-      if (!checkedCount && products.length === 0) {
-        products = window.catalog.getProducts();
-      }
-
-      window.catalog.getNutritionFilter().forEach(function (filter) {
-        if (filter.inputElement.checked) {
-          products = products.filter(function (product) {
-            return product.nutritionFacts[filter.name] === true;
-          });
-        }
-      });
-    }
-
-    products = products.filter(function (product) {
-      return product.price >= Number(rangePriceMin.textContent) &&
-             product.price <= Number(rangePriceMax.textContent);
-    });
-
-    window.catalog.getSortFilter().forEach(function (filter) {
-      if (filter.inputElement.checked) {
-        products = filter.sortingFunc(products);
-      }
-    });
-
-    window.catalog.renderProducts(products);
+  var onSortChange = function () {
+    window.debounce(window.filterLogic.onFormChange);
   };
 
   var onFormSubmit = function (evt) {
     evt.preventDefault();
-    uncheckFilters(0);
-    onFormChange(evt);
+    window.filterLogic.uncheckFilters(0);
+    window.filterLogic.setInitialSortFilter();
+    window.filterLogic.setInitialRange();
+    window.debounce(window.filterLogic.onFormChange);
   };
 
-  filterForm.addEventListener('change', onFormChange);
+  catalogFilters[0].addEventListener('change', onKindAndNutritionChange);
+  catalogFilters[1].addEventListener('change', onKindAndNutritionChange);
+  catalogFilters[2].addEventListener('change', onSpecialChange);
+  catalogFilters[3].addEventListener('change', onSortChange);
 
   filterForm.addEventListener('submit', onFormSubmit);
 
@@ -96,11 +42,6 @@
     var startCoordinate = evt.clientX;
     rangeButtonLeft.style.zIndex = 1000;
     rangeButtonRight.style.zIndex = 500;
-
-    var setMinPrice = function () {
-      rangePriceMin.textContent = Math.round((rangeButtonLeft.offsetLeft) * window.catalog.getMaxPrice() / (rangeFilter.offsetWidth - buttonWidth));
-      rangeLine.style.left = rangeButtonLeft.offsetLeft + 'px';
-    };
 
     var onButtonLeftMouseMove = function (moveEvt) {
       var shift = startCoordinate - moveEvt.clientX;
@@ -116,13 +57,13 @@
         rangeButtonLeft.style.left = currentX + 'px';
       }
 
-      setMinPrice();
+      window.filterLogic.setMinPrice();
     };
 
     var onButtonLeftMouseUp = function () {
-      setMinPrice();
+      window.filterLogic.setMinPrice();
       leftButtonX = rangeButtonLeft.offsetLeft;
-      onFormChange(evt);
+      window.debounce(window.filterLogic.onFormChange);
       document.removeEventListener('mousemove', onButtonLeftMouseMove);
       document.removeEventListener('mouseup', onButtonLeftMouseUp);
     };
@@ -137,16 +78,11 @@
     rangeButtonLeft.style.zIndex = 500;
     rangeButtonRight.style.zIndex = 1000;
 
-    var setMaxPrice = function () {
-      rangePriceMax.textContent = Math.round((rangeButtonRight.offsetLeft) * window.catalog.getMaxPrice() / (rangeFilter.offsetWidth - buttonWidth));
-      rangeLine.style.right = (rangeFilter.offsetWidth - rangeButtonRight.offsetLeft - buttonWidth) + 'px';
-    };
-
     var onButtonRightMouseMove = function (moveEvt) {
       var shift = startCoordinate - moveEvt.clientX;
       var currentX = rangeButtonRight.offsetLeft - shift;
       var leftEnd = leftButtonX;
-      var rangeEnd = rangeFilter.offsetWidth - buttonWidth;
+      var rangeEnd = window.filterLogic.rangeFilter.offsetWidth - window.filterLogic.buttonWidth;
 
       if (currentX < leftEnd) {
         rangeButtonRight.style.left = leftEnd + 'px';
@@ -157,13 +93,13 @@
         rangeButtonRight.style.left = currentX + 'px';
       }
 
-      setMaxPrice();
+      window.filterLogic.setMaxPrice();
     };
 
     var onButtonRightMouseup = function () {
-      setMaxPrice();
+      window.filterLogic.setMaxPrice();
       rightButtonX = rangeButtonRight.offsetLeft;
-      onFormChange(evt);
+      window.debounce(window.filterLogic.onFormChange);
       document.removeEventListener('mousemove', onButtonRightMouseMove);
       document.removeEventListener('mouseup', onButtonRightMouseup);
     };

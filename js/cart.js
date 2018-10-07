@@ -93,16 +93,11 @@
 
   var catalogCards = document.querySelector('.catalog__cards');
 
-  var addToFavorite = function (evt) {
-    evt.target.classList.toggle('card__btn-favorite--selected');
-    window.catalog.addProductToFavorite(evt.target.dataset.index);
-  };
-
   catalogCards.addEventListener('click', function (evt) {
     evt.preventDefault();
 
     if (evt.target.classList.contains('card__btn-favorite')) {
-      addToFavorite(evt);
+      window.catalog.addProductToFavorite(evt);
     } else if (evt.target.classList.contains('card__btn')) {
       window.cartLogic.addToCart(evt.target.dataset.index);
       renderCart(window.cartLogic.cartProducts);

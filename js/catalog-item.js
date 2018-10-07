@@ -9,7 +9,7 @@
     5: 'five'
   };
 
-  var getProductCard = function (product, catalogCardTemplate, index) {
+  var getProductCard = function (product, catalogCardTemplate) {
     var catalogCard = catalogCardTemplate.cloneNode(true);
 
     if (product.amount > 5) {
@@ -43,9 +43,9 @@
     catalogCard.querySelector('.card__characteristic').textContent = cardCharacteristic;
     catalogCard.querySelector('.card__composition-list').textContent = product.nutritionFacts.contents;
 
-    catalogCard.querySelector('.card__btn').dataset.index = index;
+    catalogCard.querySelector('.card__btn').dataset.index = product.index;
     var cardButtonFavorite = catalogCard.querySelector('.card__btn-favorite');
-    cardButtonFavorite.dataset.index = index;
+    cardButtonFavorite.dataset.index = product.index;
 
     if (product.favorite) {
       cardButtonFavorite.classList.add('card__btn-favorite--selected');
