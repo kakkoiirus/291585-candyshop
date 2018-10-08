@@ -91,17 +91,13 @@
     mainHeaderBasket.textContent = cartCounter > 0 ? cartCounter : CART_MESSAGE;
   };
 
-  var addToFavorite = function (evt) {
-    evt.target.classList.toggle('card__btn-favorite--selected');
-  };
-
   var catalogCards = document.querySelector('.catalog__cards');
 
   catalogCards.addEventListener('click', function (evt) {
     evt.preventDefault();
 
     if (evt.target.classList.contains('card__btn-favorite')) {
-      addToFavorite(evt);
+      window.catalog.addProductToFavorite(evt);
     } else if (evt.target.classList.contains('card__btn')) {
       window.cartLogic.addToCart(evt.target.dataset.index);
       renderCart(window.cartLogic.cartProducts);

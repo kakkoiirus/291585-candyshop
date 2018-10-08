@@ -1,29 +1,56 @@
 'use strict';
 
 (function () {
-  var catalogFilter = document.querySelector('.catalog__filter + .range');
-  var rangeFilter = catalogFilter.querySelector('.range__filter');
-  var rangeLine = rangeFilter.querySelector('.range__fill-line');
-  var rangeButtonLeft = rangeFilter.querySelector('.range__btn--left');
-  var rangeButtonRight = rangeFilter.querySelector('.range__btn--right');
-  var rangePriceMin = catalogFilter.querySelector('.range__price--min');
-  var rangePriceMax = catalogFilter.querySelector('.range__price--max');
-  var buttonWidth = rangeButtonLeft.offsetWidth;
+  var filterForm = document.querySelector('.catalog__sidebar form');
+  var catalogFilters = filterForm.querySelectorAll('ul.catalog__filter');
+  var kindFilterBlock = catalogFilters[0];
+  var nutritionFilterBlock = catalogFilters[1];
+  var specialFilterBlock = catalogFilters[2];
+  var sortFilterBlock = catalogFilters[3];
+  var rangeButtonLeft = window.filterLogic.rangeButtonLeft;
+  var rangeButtonRight = window.filterLogic.rangeButtonRight;
   var leftButtonX = rangeButtonLeft.offsetLeft;
   var rightButtonX = rangeButtonRight.offsetLeft;
 
+  var onKindAndNutritionChange = function () {
+    window.filterLogic.uncheckSpecialFilters();
+    window.debounce(window.filterLogic.onFormChange);
+  };
+
+  var onSpecialChange = function (evt) {
+    window.filterLogic.uncheckFilters(evt.target.id);
+    window.filterLogic.setInitialRange();
+    window.debounce(window.filterLogic.onFormChange);
+  };
+
+  var onSortChange = function () {
+    window.debounce(window.filterLogic.onFormChange);
+  };
+
+  var onFormSubmit = function (evt) {
+    evt.preventDefault();
+    window.filterLogic.uncheckFilters(0);
+    window.filterLogic.setInitialSortFilter();
+    window.filterLogic.setInitialRange();
+    window.debounce(window.filterLogic.onFormChange);
+  };
+
+  kindFilterBlock.addEventListener('change', onKindAndNutritionChange);
+  nutritionFilterBlock.addEventListener('change', onKindAndNutritionChange);
+  specialFilterBlock.addEventListener('change', onSpecialChange);
+  sortFilterBlock.addEventListener('change', onSortChange);
+
+  filterForm.addEventListener('submit', onFormSubmit);
+
   rangeButtonLeft.addEventListener('mousedown', function (evt) {
     var startCoordinate = evt.clientX;
-
-    var setMinPrice = function () {
-      rangePriceMin.textContent = Math.round((rangeButtonLeft.offsetLeft) * 100 / (rangeFilter.offsetWidth - buttonWidth));
-      rangeLine.style.left = rangeButtonLeft.offsetLeft + 'px';
-    };
+    rangeButtonLeft.style.zIndex = 1000;
+    rangeButtonRight.style.zIndex = 500;
 
     var onButtonLeftMouseMove = function (moveEvt) {
       var shift = startCoordinate - moveEvt.clientX;
       var currentX = rangeButtonLeft.offsetLeft - shift;
-      var rightEnd = rightButtonX - buttonWidth;
+      var rightEnd = rightButtonX;
 
       if (currentX < 0) {
         rangeButtonLeft.style.left = '0px';
@@ -34,34 +61,32 @@
         rangeButtonLeft.style.left = currentX + 'px';
       }
 
-      setMinPrice();
+      window.filterLogic.setMinPrice();
     };
 
-    var onButtonLeftMouseup = function () {
-      setMinPrice();
+    var onButtonLeftMouseUp = function () {
+      window.filterLogic.setMinPrice();
       leftButtonX = rangeButtonLeft.offsetLeft;
+      window.debounce(window.filterLogic.onFormChange);
       document.removeEventListener('mousemove', onButtonLeftMouseMove);
-      document.removeEventListener('mouseup', onButtonLeftMouseup);
+      document.removeEventListener('mouseup', onButtonLeftMouseUp);
     };
 
     document.addEventListener('mousemove', onButtonLeftMouseMove);
 
-    document.addEventListener('mouseup', onButtonLeftMouseup);
+    document.addEventListener('mouseup', onButtonLeftMouseUp);
   });
 
   rangeButtonRight.addEventListener('mousedown', function (evt) {
     var startCoordinate = evt.clientX;
-
-    var setMaxPrice = function () {
-      rangePriceMax.textContent = Math.round((rangeButtonRight.offsetLeft) * 100 / (rangeFilter.offsetWidth - buttonWidth));
-      rangeLine.style.right = (rangeFilter.offsetWidth - rangeButtonRight.offsetLeft - buttonWidth) + 'px';
-    };
+    rangeButtonLeft.style.zIndex = 500;
+    rangeButtonRight.style.zIndex = 1000;
 
     var onButtonRightMouseMove = function (moveEvt) {
       var shift = startCoordinate - moveEvt.clientX;
       var currentX = rangeButtonRight.offsetLeft - shift;
-      var leftEnd = leftButtonX + buttonWidth;
-      var rangeEnd = rangeFilter.offsetWidth - buttonWidth;
+      var leftEnd = leftButtonX;
+      var rangeEnd = window.filterLogic.rangeFilter.offsetWidth - window.filterLogic.buttonWidth;
 
       if (currentX < leftEnd) {
         rangeButtonRight.style.left = leftEnd + 'px';
@@ -72,12 +97,13 @@
         rangeButtonRight.style.left = currentX + 'px';
       }
 
-      setMaxPrice();
+      window.filterLogic.setMaxPrice();
     };
 
     var onButtonRightMouseup = function () {
-      setMaxPrice();
+      window.filterLogic.setMaxPrice();
       rightButtonX = rangeButtonRight.offsetLeft;
+      window.debounce(window.filterLogic.onFormChange);
       document.removeEventListener('mousemove', onButtonRightMouseMove);
       document.removeEventListener('mouseup', onButtonRightMouseup);
     };
