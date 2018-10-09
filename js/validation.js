@@ -23,7 +23,8 @@
     if (result.isValid) {
       result.isValid = checkLuhn(paymentCardNumber.value);
       if (!result.isValid) {
-        result.customValidityMessage = CARD_NUMBER_ERROR_MESSAGE;
+        result.message = CARD_VALIDATION_ERROR_MESSAGE;
+        result.customCardValidityMessage = CARD_NUMBER_ERROR_MESSAGE;
       }
     }
 
@@ -38,13 +39,13 @@
       if (i % 2 !== 0) {
         sumOfNumbers += Number(cardNumbers[i]);
       } else {
-        var tempNumber = Number(cardNumbers[i]) * 2;
+        var evenNumber = Number(cardNumbers[i]) * 2;
 
-        if (tempNumber > 9) {
-          tempNumber = tempNumber - 9;
+        if (evenNumber > 9) {
+          evenNumber = evenNumber - 9;
         }
 
-        sumOfNumbers += tempNumber;
+        sumOfNumbers += evenNumber;
       }
     }
 
