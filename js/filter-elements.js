@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  var kindFilter = {
+  var KindFilter = {
     'filter-icecream': {
       name: 'Мороженое'
     },
@@ -19,7 +19,7 @@
     }
   };
 
-  var nutritionFilter = {
+  var NutritionFilter = {
     'filter-sugar-free': {
       name: 'sugar'
     },
@@ -31,7 +31,7 @@
     }
   };
 
-  var specialFilter = {
+  var SpecialFilter = {
     'filter-favorite': {
       sortingFunc: function (product) {
         return product.favorite === true;
@@ -44,7 +44,7 @@
     }
   };
 
-  var sortFilter = {
+  var SortFilter = {
     'filter-popular': {
       sortingFunc: function (unsortedProducts) {
         return unsortedProducts;
@@ -89,37 +89,37 @@
     }
   };
 
-  for (var kindElement in kindFilter) {
-    if (kindFilter.hasOwnProperty(kindElement)) {
-      kindFilter[kindElement].inputElement = document.querySelector('#' + kindElement);
-      kindFilter[kindElement].countElement = document.querySelector('#' + kindElement + '~ .input-btn__item-count');
+  for (var kindElement in KindFilter) {
+    if (KindFilter.hasOwnProperty(kindElement)) {
+      KindFilter[kindElement].inputElement = document.querySelector('#' + kindElement);
+      KindFilter[kindElement].countElement = document.querySelector('#' + kindElement + '~ .input-btn__item-count');
     }
   }
 
-  for (var nutritionElement in nutritionFilter) {
-    if (nutritionFilter.hasOwnProperty(nutritionElement)) {
-      nutritionFilter[nutritionElement].inputElement = document.querySelector('#' + nutritionElement);
-      nutritionFilter[nutritionElement].countElement = document.querySelector('#' + nutritionElement + '~ .input-btn__item-count');
+  for (var nutritionElement in NutritionFilter) {
+    if (NutritionFilter.hasOwnProperty(nutritionElement)) {
+      NutritionFilter[nutritionElement].inputElement = document.querySelector('#' + nutritionElement);
+      NutritionFilter[nutritionElement].countElement = document.querySelector('#' + nutritionElement + '~ .input-btn__item-count');
     }
   }
 
-  for (var specialElement in specialFilter) {
-    if (specialFilter.hasOwnProperty(specialElement)) {
-      specialFilter[specialElement].inputElement = document.querySelector('#' + specialElement);
-      specialFilter[specialElement].countElement = document.querySelector('#' + specialElement + '~ .input-btn__item-count');
+  for (var specialElement in SpecialFilter) {
+    if (SpecialFilter.hasOwnProperty(specialElement)) {
+      SpecialFilter[specialElement].inputElement = document.querySelector('#' + specialElement);
+      SpecialFilter[specialElement].countElement = document.querySelector('#' + specialElement + '~ .input-btn__item-count');
     }
   }
 
-  for (var sortElement in sortFilter) {
-    if (sortFilter.hasOwnProperty(sortElement)) {
-      sortFilter[sortElement].inputElement = document.querySelector('#' + sortElement);
+  for (var sortElement in SortFilter) {
+    if (SortFilter.hasOwnProperty(sortElement)) {
+      SortFilter[sortElement].inputElement = document.querySelector('#' + sortElement);
     }
   }
 
   window.filterElements = {
-    kindFilter: kindFilter,
-    nutritionFilter: nutritionFilter,
-    specialFilter: specialFilter,
-    sortFilter: sortFilter
+    KindFilter: KindFilter,
+    NutritionFilter: NutritionFilter,
+    SpecialFilter: SpecialFilter,
+    SortFilter: SortFilter
   };
 })();

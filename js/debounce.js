@@ -3,13 +3,19 @@
 (function () {
   var DEBOUNCE_INTERVAL = 500;
 
-  var lastTimeout;
+  window.debounce = function (fun) {
+    var lastTimeout = null;
 
-  window.debounce = function (func) {
-    if (lastTimeout) {
-      window.clearTimeout(lastTimeout);
-    }
+    return function () {
+      var args = arguments;
 
-    lastTimeout = window.setTimeout(func, DEBOUNCE_INTERVAL);
+      if (lastTimeout) {
+        window.clearTimeout(lastTimeout);
+      }
+
+      lastTimeout = window.setTimeout(function () {
+        fun.apply(null, args);
+      }, DEBOUNCE_INTERVAL);
+    };
   };
 })();

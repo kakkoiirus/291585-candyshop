@@ -2,42 +2,42 @@
 
 (function () {
   var renderFilterCount = function (productsData) {
-    for (var kindElement in window.filterElements.kindFilter) {
-      if (window.filterElements.kindFilter.hasOwnProperty(kindElement)) {
-        var kindFilter = window.filterElements.kindFilter[kindElement];
-        kindFilter.products = productsData.filter(function (product) {
-          return product.kind === kindFilter.name;
+    for (var kindElement in window.filterElements.KindFilter) {
+      if (window.filterElements.KindFilter.hasOwnProperty(kindElement)) {
+        var KindFilter = window.filterElements.KindFilter[kindElement];
+        KindFilter.products = productsData.filter(function (product) {
+          return product.kind === KindFilter.name;
         });
 
-        kindFilter.countElement.textContent = '(' + kindFilter.products.length + ')';
+        KindFilter.countElement.textContent = '(' + KindFilter.products.length + ')';
       }
     }
 
-    for (var nutritionElement in window.filterElements.nutritionFilter) {
-      if (window.filterElements.nutritionFilter.hasOwnProperty(nutritionElement)) {
-        var nutritionFilter = window.filterElements.nutritionFilter[nutritionElement];
+    for (var nutritionElement in window.filterElements.NutritionFilter) {
+      if (window.filterElements.NutritionFilter.hasOwnProperty(nutritionElement)) {
+        var NutritionFilter = window.filterElements.NutritionFilter[nutritionElement];
 
-        nutritionFilter.products = productsData.filter(function (product) {
-          return product.nutritionFacts[nutritionFilter.name] === true;
+        NutritionFilter.products = productsData.filter(function (product) {
+          return product.nutritionFacts[NutritionFilter.name] === true;
         });
 
-        nutritionFilter.countElement.textContent = '(' + nutritionFilter.products.length + ')';
+        NutritionFilter.countElement.textContent = '(' + NutritionFilter.products.length + ')';
       }
     }
 
-    for (var specialElement in window.filterElements.specialFilter) {
-      if (window.filterElements.specialFilter.hasOwnProperty(specialElement)) {
-        var specialFilter = window.filterElements.specialFilter[specialElement];
+    for (var specialElement in window.filterElements.SpecialFilter) {
+      if (window.filterElements.SpecialFilter.hasOwnProperty(specialElement)) {
+        var SpecialFilter = window.filterElements.SpecialFilter[specialElement];
 
-        specialFilter.products = productsData.filter(specialFilter.sortingFunc);
-        specialFilter.countElement.textContent = '(' + specialFilter.products.length + ')';
+        SpecialFilter.products = productsData.filter(SpecialFilter.sortingFunc);
+        SpecialFilter.countElement.textContent = '(' + SpecialFilter.products.length + ')';
       }
     }
   };
 
   var updateFavoriteFilterCount = function (productsData) {
-    window.filterElements.specialFilter['filter-favorite'].products = productsData.filter(window.filterElements.specialFilter['filter-favorite'].sortingFunc);
-    window.filterElements.specialFilter['filter-favorite'].countElement.textContent = '(' + window.filterElements.specialFilter['filter-favorite'].products.length + ')';
+    window.filterElements.SpecialFilter['filter-favorite'].products = productsData.filter(window.filterElements.SpecialFilter['filter-favorite'].sortingFunc);
+    window.filterElements.SpecialFilter['filter-favorite'].countElement.textContent = '(' + window.filterElements.SpecialFilter['filter-favorite'].products.length + ')';
   };
 
   var catalogFilter = document.querySelector('.catalog__filter + .range');
@@ -49,22 +49,22 @@
   var rangePriceMax = catalogFilter.querySelector('.range__price--max');
   var buttonWidth = rangeButtonLeft.offsetWidth;
 
-  var onFormChange = function () {
+  var onFormChange = window.debounce(function () {
     var products = [];
     var checkedCount = 0;
 
-    if (window.filterElements.specialFilter['filter-availability'].inputElement.checked) {
-      products = window.filterElements.specialFilter['filter-availability'].products;
-    } else if (window.filterElements.specialFilter['filter-favorite'].inputElement.checked) {
-      products = window.catalog.getProducts().filter(window.filterElements.specialFilter['filter-favorite'].sortingFunc);
+    if (window.filterElements.SpecialFilter['filter-availability'].inputElement.checked) {
+      products = window.filterElements.SpecialFilter['filter-availability'].products;
+    } else if (window.filterElements.SpecialFilter['filter-favorite'].inputElement.checked) {
+      products = window.catalog.getProducts().filter(window.filterElements.SpecialFilter['filter-favorite'].sortingFunc);
     } else {
-      for (var kindElement in window.filterElements.kindFilter) {
-        if (window.filterElements.kindFilter.hasOwnProperty(kindElement)) {
-          var kindFilter = window.filterElements.kindFilter[kindElement];
+      for (var kindElement in window.filterElements.KindFilter) {
+        if (window.filterElements.KindFilter.hasOwnProperty(kindElement)) {
+          var KindFilter = window.filterElements.KindFilter[kindElement];
 
-          if (kindFilter.inputElement.checked) {
+          if (KindFilter.inputElement.checked) {
             checkedCount++;
-            products = products.concat(kindFilter.products);
+            products = products.concat(KindFilter.products);
           }
         }
       }
@@ -73,13 +73,13 @@
         products = window.catalog.getProducts();
       }
 
-      for (var nutritionElement in window.filterElements.nutritionFilter) {
-        if (window.filterElements.nutritionFilter.hasOwnProperty(nutritionElement)) {
-          var nutritionFilter = window.filterElements.nutritionFilter[nutritionElement];
+      for (var nutritionElement in window.filterElements.NutritionFilter) {
+        if (window.filterElements.NutritionFilter.hasOwnProperty(nutritionElement)) {
+          var NutritionFilter = window.filterElements.NutritionFilter[nutritionElement];
 
-          if (nutritionFilter.inputElement.checked) {
+          if (NutritionFilter.inputElement.checked) {
             products = products.filter(function (product) {
-              return product.nutritionFacts[nutritionFilter.name] === true;
+              return product.nutritionFacts[NutritionFilter.name] === true;
             });
           }
         }
@@ -91,51 +91,51 @@
              product.price <= Number(rangePriceMax.textContent);
     });
 
-    for (var sortElement in window.filterElements.sortFilter) {
-      if (window.filterElements.sortFilter.hasOwnProperty(sortElement)) {
+    for (var sortElement in window.filterElements.SortFilter) {
+      if (window.filterElements.SortFilter.hasOwnProperty(sortElement)) {
 
-        if (window.filterElements.sortFilter[sortElement].inputElement.checked) {
-          products = window.filterElements.sortFilter[sortElement].sortingFunc(products);
+        if (window.filterElements.SortFilter[sortElement].inputElement.checked) {
+          products = window.filterElements.SortFilter[sortElement].sortingFunc(products);
         }
       }
     }
 
     window.catalog.renderProducts(products);
-  };
+  });
 
   var uncheckFilters = function (activeSpecialFilter) {
-    for (var kindElement in window.filterElements.kindFilter) {
-      if (window.filterElements.kindFilter.hasOwnProperty(kindElement)) {
-        window.filterElements.kindFilter[kindElement].inputElement.checked = false;
+    for (var kindElement in window.filterElements.KindFilter) {
+      if (window.filterElements.KindFilter.hasOwnProperty(kindElement)) {
+        window.filterElements.KindFilter[kindElement].inputElement.checked = false;
       }
     }
 
-    for (var nutritionElement in window.filterElements.nutritionFilter) {
-      if (window.filterElements.nutritionFilter.hasOwnProperty(nutritionElement)) {
-        window.filterElements.nutritionFilter[nutritionElement].inputElement.checked = false;
+    for (var nutritionElement in window.filterElements.NutritionFilter) {
+      if (window.filterElements.NutritionFilter.hasOwnProperty(nutritionElement)) {
+        window.filterElements.NutritionFilter[nutritionElement].inputElement.checked = false;
       }
     }
 
-    for (var specialElement in window.filterElements.specialFilter) {
-      if (window.filterElements.specialFilter.hasOwnProperty(specialElement)) {
+    for (var specialElement in window.filterElements.SpecialFilter) {
+      if (window.filterElements.SpecialFilter.hasOwnProperty(specialElement)) {
 
         if (specialElement !== activeSpecialFilter) {
-          window.filterElements.specialFilter[specialElement].inputElement.checked = false;
+          window.filterElements.SpecialFilter[specialElement].inputElement.checked = false;
         }
       }
     }
   };
 
   var uncheckSpecialFilters = function () {
-    for (var specialElement in window.filterElements.specialFilter) {
-      if (window.filterElements.specialFilter.hasOwnProperty(specialElement)) {
-        window.filterElements.specialFilter[specialElement].inputElement.checked = false;
+    for (var specialElement in window.filterElements.SpecialFilter) {
+      if (window.filterElements.SpecialFilter.hasOwnProperty(specialElement)) {
+        window.filterElements.SpecialFilter[specialElement].inputElement.checked = false;
       }
     }
   };
 
   var setInitialSortFilter = function () {
-    window.filterElements.sortFilter['filter-popular'].inputElement.checked = true;
+    window.filterElements.SortFilter['filter-popular'].inputElement.checked = true;
   };
 
   var setInitialRange = function () {

@@ -12,17 +12,17 @@
 
   var onKindAndNutritionChange = function () {
     window.filterLogic.uncheckSpecialFilters();
-    window.debounce(window.filterLogic.onFormChange);
+    window.filterLogic.onFormChange();
   };
 
   var onSpecialChange = function (evt) {
     window.filterLogic.uncheckFilters(evt.target.id);
     window.filterLogic.setInitialRange();
-    window.debounce(window.filterLogic.onFormChange);
+    window.filterLogic.onFormChange();
   };
 
   var onSortChange = function () {
-    window.debounce(window.filterLogic.onFormChange);
+    window.filterLogic.onFormChange();
   };
 
   var onFormSubmit = function (evt) {
@@ -30,7 +30,7 @@
     window.filterLogic.uncheckFilters(0);
     window.filterLogic.setInitialSortFilter();
     window.filterLogic.setInitialRange();
-    window.debounce(window.filterLogic.onFormChange);
+    window.filterLogic.onFormChange();
   };
 
   kindFilterBlock.addEventListener('change', onKindAndNutritionChange);
@@ -63,7 +63,7 @@
 
     var onButtonLeftMouseUp = function () {
       window.filterLogic.setMinPrice();
-      window.debounce(window.filterLogic.onFormChange);
+      window.filterLogic.onFormChange();
       document.removeEventListener('mousemove', onButtonLeftMouseMove);
       document.removeEventListener('mouseup', onButtonLeftMouseUp);
     };
@@ -97,7 +97,7 @@
 
     var onButtonRightMouseup = function () {
       window.filterLogic.setMaxPrice();
-      window.debounce(window.filterLogic.onFormChange);
+      window.filterLogic.onFormChange();
       document.removeEventListener('mousemove', onButtonRightMouseMove);
       document.removeEventListener('mouseup', onButtonRightMouseup);
     };
