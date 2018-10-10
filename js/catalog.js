@@ -2,13 +2,9 @@
 
 (function () {
   var products;
-  var minPrice;
   var maxPrice;
 
-  var setMinMaxPrices = function () {
-    minPrice = products.reduce(function (minValue, currentValue) {
-      return minValue > currentValue.price ? currentValue.price : minValue;
-    }, 0);
+  var setMaxPrices = function () {
     maxPrice = products.reduce(function (maxValue, currentValue) {
       return maxValue < currentValue.price ? currentValue.price : maxValue;
     }, 0);
@@ -43,7 +39,7 @@
       product.index = index;
     });
 
-    setMinMaxPrices();
+    setMaxPrices();
     window.filterLogic.setInitialRange();
     renderProducts(products);
     window.filterLogic.renderFilterCount(products);
@@ -55,10 +51,6 @@
 
   var getProducts = function () {
     return products;
-  };
-
-  var getMinPrice = function () {
-    return minPrice;
   };
 
   var getMaxPrice = function () {
@@ -77,7 +69,6 @@
 
   window.catalog = {
     getProducts: getProducts,
-    getMinPrice: getMinPrice,
     getMaxPrice: getMaxPrice,
     addProductToFavorite: addProductToFavorite,
     renderProducts: renderProducts,

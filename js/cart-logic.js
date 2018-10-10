@@ -13,6 +13,7 @@
       for (var i = 0; i < cartProducts.length; i++) {
         if (cartProducts[i].index === productIndex) {
           itemInCartCount = setItemCount(i, cartProducts[i].count + 1);
+          break;
         }
       }
 

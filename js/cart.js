@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  var CART_MESSAGE = 'В корзине ничего нет';
+  var EMPTY_CART_MESSAGE = 'В корзине ничего нет';
 
   var goodsCards = document.querySelector('.goods__cards');
   var goodsCardEmpty = document.querySelector('.goods__card-empty');
@@ -88,7 +88,7 @@
   var setHeaderBasket = function () {
     var cartCounter = window.cartLogic.getAllItemCount();
 
-    mainHeaderBasket.textContent = cartCounter > 0 ? cartCounter : CART_MESSAGE;
+    mainHeaderBasket.textContent = cartCounter > 0 ? cartCounter : EMPTY_CART_MESSAGE;
   };
 
   var catalogCards = document.querySelector('.catalog__cards');

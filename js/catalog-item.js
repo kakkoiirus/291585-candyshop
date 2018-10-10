@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  var RATINGS = {
+  var Ratings = {
     1: 'one',
     2: 'two',
     3: 'three',
@@ -30,7 +30,7 @@
 
     if (product.rating.value < 5) {
       productRating.classList.remove('stars__rating--five');
-      productRating.classList.add('stars__rating--' + RATINGS[product.rating.value]);
+      productRating.classList.add('stars__rating--' + Ratings[product.rating.value]);
 
       productRating.textContent = product.rating.value > 1 ? 'Рейтинг: ' + product.rating.value + ' звёзды' : 'Рейтинг: ' + product.rating.value + ' звёзда';
     }

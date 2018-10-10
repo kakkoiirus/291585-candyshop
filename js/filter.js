@@ -9,22 +9,20 @@
   var sortFilterBlock = catalogFilters[3];
   var rangeButtonLeft = window.filterLogic.rangeButtonLeft;
   var rangeButtonRight = window.filterLogic.rangeButtonRight;
-  var leftButtonX = rangeButtonLeft.offsetLeft;
-  var rightButtonX = rangeButtonRight.offsetLeft;
 
   var onKindAndNutritionChange = function () {
     window.filterLogic.uncheckSpecialFilters();
-    window.debounce(window.filterLogic.onFormChange);
+    window.filterLogic.onFormChange();
   };
 
   var onSpecialChange = function (evt) {
     window.filterLogic.uncheckFilters(evt.target.id);
     window.filterLogic.setInitialRange();
-    window.debounce(window.filterLogic.onFormChange);
+    window.filterLogic.onFormChange();
   };
 
   var onSortChange = function () {
-    window.debounce(window.filterLogic.onFormChange);
+    window.filterLogic.onFormChange();
   };
 
   var onFormSubmit = function (evt) {
@@ -32,7 +30,7 @@
     window.filterLogic.uncheckFilters(0);
     window.filterLogic.setInitialSortFilter();
     window.filterLogic.setInitialRange();
-    window.debounce(window.filterLogic.onFormChange);
+    window.filterLogic.onFormChange();
   };
 
   kindFilterBlock.addEventListener('change', onKindAndNutritionChange);
@@ -50,12 +48,11 @@
     var onButtonLeftMouseMove = function (moveEvt) {
       var shift = startCoordinate - moveEvt.clientX;
       var currentX = rangeButtonLeft.offsetLeft - shift;
-      var rightEnd = rightButtonX;
 
       if (currentX < 0) {
         rangeButtonLeft.style.left = '0px';
-      } else if (currentX > rightEnd) {
-        rangeButtonLeft.style.left = (rightEnd) + 'px';
+      } else if (currentX > rangeButtonRight.offsetLeft) {
+        rangeButtonLeft.style.left = (rangeButtonRight.offsetLeft) + 'px';
       } else {
         startCoordinate = moveEvt.clientX;
         rangeButtonLeft.style.left = currentX + 'px';
@@ -66,8 +63,7 @@
 
     var onButtonLeftMouseUp = function () {
       window.filterLogic.setMinPrice();
-      leftButtonX = rangeButtonLeft.offsetLeft;
-      window.debounce(window.filterLogic.onFormChange);
+      window.filterLogic.onFormChange();
       document.removeEventListener('mousemove', onButtonLeftMouseMove);
       document.removeEventListener('mouseup', onButtonLeftMouseUp);
     };
@@ -85,11 +81,10 @@
     var onButtonRightMouseMove = function (moveEvt) {
       var shift = startCoordinate - moveEvt.clientX;
       var currentX = rangeButtonRight.offsetLeft - shift;
-      var leftEnd = leftButtonX;
       var rangeEnd = window.filterLogic.rangeFilter.offsetWidth - window.filterLogic.buttonWidth;
 
-      if (currentX < leftEnd) {
-        rangeButtonRight.style.left = leftEnd + 'px';
+      if (currentX < rangeButtonLeft.offsetLeft) {
+        rangeButtonRight.style.left = rangeButtonLeft.offsetLeft + 'px';
       } else if (currentX > rangeEnd) {
         rangeButtonRight.style.left = rangeEnd + 'px';
       } else {
@@ -102,8 +97,7 @@
 
     var onButtonRightMouseup = function () {
       window.filterLogic.setMaxPrice();
-      rightButtonX = rangeButtonRight.offsetLeft;
-      window.debounce(window.filterLogic.onFormChange);
+      window.filterLogic.onFormChange();
       document.removeEventListener('mousemove', onButtonRightMouseMove);
       document.removeEventListener('mouseup', onButtonRightMouseup);
     };

@@ -1,20 +1,22 @@
 'use strict';
 
 (function () {
+  var ESC_CODE = 27;
+
   var modals = document.querySelectorAll('.modal');
   var modalError = modals[0];
   var modalErrorMessage = modalError.querySelector('.modal__message');
   var modalSuccess = modals[1];
 
   var onSuccessEscPress = function (evt) {
-    if (evt.keyCode === 27) {
+    if (evt.keyCode === ESC_CODE) {
       modalSuccess.classList.add('modal--hidden');
       document.removeEventListener('keydown', onSuccessEscPress);
     }
   };
 
   var onErrorEscPress = function (evt) {
-    if (evt.keyCode === 27) {
+    if (evt.keyCode === ESC_CODE) {
       modalError.classList.add('modal--hidden');
       document.removeEventListener('keydown', onErrorEscPress);
     }
