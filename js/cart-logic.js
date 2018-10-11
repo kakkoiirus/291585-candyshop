@@ -58,10 +58,21 @@
     return result;
   };
 
+  var getAllItemSum = function () {
+    var result = 0;
+
+    cartProducts.forEach(function (cartItem) {
+      result += cartItem.count * cartItem.price;
+    });
+
+    return result;
+  };
+
   window.cartLogic = {
     cartProducts: cartProducts,
     addToCart: addToCart,
     setItemCount: setItemCount,
-    getAllItemCount: getAllItemCount
+    getAllItemCount: getAllItemCount,
+    getAllItemSum: getAllItemSum
   };
 })();

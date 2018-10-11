@@ -2,11 +2,16 @@
 
 (function () {
   var EMPTY_CART_MESSAGE = 'В корзине ничего нет';
+  var CURRENCY_SYMBOL = ' ₽';
 
   var goodsCards = document.querySelector('.goods__cards');
   var goodsCardEmpty = document.querySelector('.goods__card-empty');
   var cartItemTemplate = document.querySelector('#card-order').content.querySelector('.goods_card');
   var mainHeaderBasket = document.querySelector('.main-header__basket');
+  var goodsTotal = document.querySelector('.goods__total');
+  var goodsTotalQuantity = goodsTotal.querySelector('.goods__total-quantity');
+  var goodsTotalPrice = goodsTotal.querySelector('.goods__price');
+
   var isFirstCartRender = true;
 
   var getCartItem = function (index, product) {
@@ -17,7 +22,7 @@
     cartItemImage.src = 'img/cards/' + product.picture;
     cartItemImage.alt = product.name;
 
-    cartItem.querySelector('.card-order__price').textContent = product.price + ' ₽';
+    cartItem.querySelector('.card-order__price').textContent = product.price + CURRENCY_SYMBOL;
 
     cartItem.querySelector('.card-order__count').value = product.count;
 
@@ -33,7 +38,9 @@
         renderCart(window.cartLogic.cartProducts);
       } else {
         cartOrderCount.value = result;
-        setHeaderBasket();
+        var cartCounter = window.cartLogic.getAllItemCount();
+        setHeaderBasket(cartCounter);
+        setCartTotal(cartCounter);
       }
     };
 
@@ -61,12 +68,14 @@
     if (isFirstCartRender && cartItemList.length !== 0) {
       goodsCards.classList.remove('goods__cards--empty');
       goodsCardEmpty.classList.add('visually-hidden');
+      goodsTotal.classList.remove('visually-hidden');
       window.order.enableBuyForm();
       isFirstCartRender = false;
     } else if (cartItemList.length === 0) {
       window.order.setCartStatus(true);
       goodsCards.classList.add('goods__cards--empty');
       goodsCardEmpty.classList.remove('visually-hidden');
+      goodsTotal.classList.add('visually-hidden');
       isFirstCartRender = true;
       goodsCards.innerHTML = '';
       goodsCards.appendChild(goodsCardEmpty);
@@ -81,14 +90,20 @@
       fragment.appendChild(getCartItem(i, cartItemList[i]));
     }
 
-    setHeaderBasket();
+    var cartCounter = window.cartLogic.getAllItemCount();
+
+    setHeaderBasket(cartCounter);
+    setCartTotal(cartCounter);
     goodsCards.appendChild(fragment);
   };
 
-  var setHeaderBasket = function () {
-    var cartCounter = window.cartLogic.getAllItemCount();
+  var setCartTotal = function (count) {
+    goodsTotalQuantity.textContent = count;
+    goodsTotalPrice.textContent = window.cartLogic.getAllItemSum() + CURRENCY_SYMBOL;
+  };
 
-    mainHeaderBasket.textContent = cartCounter > 0 ? cartCounter : EMPTY_CART_MESSAGE;
+  var setHeaderBasket = function (count) {
+    mainHeaderBasket.textContent = count > 0 ? count : EMPTY_CART_MESSAGE;
   };
 
   var catalogCards = document.querySelector('.catalog__cards');
